@@ -12,5 +12,5 @@ php artisan gateway:install laravelpay/gateway-tebex
 
 ## Setup
 ```
-php artisan gateway:install tebex
+php artisan gateway:setup tebex
 ```
