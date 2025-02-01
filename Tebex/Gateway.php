@@ -86,7 +86,7 @@ class Gateway extends GatewayFoundation
         return redirect()->away($checkout['links']['checkout']);
     }
 
-    public function callback(Request $request)
+    public function webhook(Request $request)
     {
         // WebHook validation
         if ($request->get('type', 'none') == 'validation.webhook') {
