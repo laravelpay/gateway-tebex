@@ -62,8 +62,8 @@ class Gateway extends GatewayFoundation
                 'custom' => [
                     'payment_id' => $payment->id,
                 ],
-                'return_url' => $payment->successUrl(),
-                'complete_url' => $payment->cancelUrl(),
+                'return_url' => $payment->cancelUrl(),
+                'complete_url' => $payment->callbackUrl(),
             ],
             'items' => [
                 [
@@ -83,9 +83,28 @@ class Gateway extends GatewayFoundation
             throw new Exception('Failed to create checkout using Tebex API');
         }
 
+        // store transaction id locally
+        $payment->update([
+            'transaction_id' => $checkout['id'],
+        ]);
+
         return redirect()->away($checkout['links']['checkout']);
     }
 
+    public function callback(Requeest $request)
+    {
+        $payment = Payment::find($request->get('payment_id'));
+
+        if(!$payment) {
+            throw new Exception('Payment not found');
+        }
+
+        if($payment->isPaid()) {
+            return redirect($payment->successUrl());
+        }
+
+        return redirect($payment->successUrl());
+    }
     public function webhook(Request $request)
     {
         // WebHook validation
